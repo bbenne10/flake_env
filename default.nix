@@ -16,7 +16,7 @@ buildDunePackage {
   src = ./.;
   duneVersion = "3";
   postPatch = ''
-    substituteInPlace direnvrc --replace "flake_env" "$out/bin/flake_env"
+    substituteInPlace direnvrc --replace "@flake_env@" "$out/bin/flake_env"
   '';
   postInstall = ''
     install -m400 -D direnvrc $out/share/flake_env/direnvrc
