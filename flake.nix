@@ -32,6 +32,7 @@
               pkgs.ocamlPackages.ocaml-lsp
               pkgs.ocamlPackages.ocamlformat
               pkgs.ocamlPackages.ocamlformat-rpc-lib
+              pkgs.ocamlPackages.utop
             ];
           };
         };
