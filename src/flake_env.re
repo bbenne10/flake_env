@@ -128,21 +128,20 @@ let get_watches = () => {
   }
 };
 
-let rec rmrf = (path) => switch (Sys_unix.is_directory(~follow_symlinks=false, path)) {
-  | `Yes => {
-      Sys_unix.readdir(path) |> Array.iter(~f=name => { print_endline(Filename.concat(path, name)); rmrf(Filename.concat(path, name))});
+// TODO: Maybe make this more terse?
+let rec rmrf = (path) => {
+  switch (Unix.lstat(path).st_kind) {
+  | S_REG => Unix.unlink(path)
+  | S_LNK => Unix.unlink(path)
+  | S_DIR => {
+      Sys_unix.readdir(path) |> Array.iter(~f=name => rmrf(Filename.concat(path, name)));
       Unix.rmdir(path)
     }
-  | `No => {
-      switch (Sys_unix.is_file(~follow_symlinks=false, path)) {
-      | `Yes => Sys_unix.remove(path)
-      | _ => ()
-      }
-    }
-  | `Unknown => {
-      Printf.eprintf("Cannot determine what file type of path %s", path);
-      exit(1);
-    }
+  | S_CHR => Printf.eprintf("Don't know how to handle Character Device file\n")
+  | S_BLK => Printf.eprintf("Don't know how to handle Block Device file\n")
+  | S_FIFO => Printf.eprintf("Don't know how to handle FIFO file\n")
+  | S_SOCK => Printf.eprintf("Don't know how to handle Socket file\n")
+  }
 };
 
 let clean_old_gcroots = (layout_dir) => {
