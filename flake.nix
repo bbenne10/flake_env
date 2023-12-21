@@ -37,7 +37,7 @@
         };
         flake = {
           overlays.default = final: _prev: {
-            flake_env = final.callPackage ./default.nix { };
+            flake_env = final.ocamlPackages.callPackage ./default.nix { };
           };
         };
       });
