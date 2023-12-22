@@ -131,6 +131,7 @@ let get_watches = () => {
 // TODO: Maybe make this more terse?
 let rec rmrf = (path) => {
   switch (Unix.lstat(path).st_kind) {
+  | exception Unix.Unix_error(_, _, _) => ()
   | S_REG => Unix.unlink(path)
   | S_LNK => Unix.unlink(path)
   | S_DIR => {
@@ -174,6 +175,7 @@ let freshen_cache = (layout_dir, hash, flake_specifier) => {
   switch (exit_code) {
   | Ok() => {
       Out_channel.with_file(~f=f=> Out_channel.output_string(f, stdout_content), profile_rc);
+      // TODO: flake inputs!
       switch (nix(["build", "--out-link", profile, tmp_profile])) {
       | (Ok(), _) => {
           Sys_unix.remove(tmp_profile);
@@ -223,13 +225,13 @@ let main = () => {
                 }
               };
             | Error(e) => {
-                Printf.eprintf("%s", e);
+                Printf.eprintf("%s\n", e);
                 exit(1);
               }
             }
           }
       | Error(e) => {
-          Printf.eprintf("%s", e);
+          Printf.eprintf("%s\n", e);
           exit(1);
         }
       };
