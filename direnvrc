@@ -39,7 +39,11 @@ use_flake_env() {
   local old_xdg_data_dirs=${XDG_DATA_DIRS:-}
 
   local ld=$(direnv_layout_dir)
-  eval $(@flake_env@ "$1" "$ld")
+  export direnv
+
+  eval "$(@flake_env@ "$1" "$ld")"
+
+  export -n direnv
 
   # `nix print-dev-env` will create a temporary directory and use it as TMPDIR
   # We cannot rely on this directory being available at all times,
