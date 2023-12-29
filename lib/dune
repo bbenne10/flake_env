@@ -1,0 +1,5 @@
+(library
+  (name lib)
+  (public_name flake_env.lib)
+  (libraries core core_unix core_unix.filename_unix core_unix.sys_unix ppx_yojson_conv re sha)
+  (preprocess (pps ppx_yojson_conv ppx_jane ppx_inline_test)))
