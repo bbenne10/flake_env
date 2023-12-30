@@ -6,9 +6,12 @@
       url = "github:hercules-ci/flake-parts";
       inputs.nixpkgs-lib.follows = "nixpkgs";
     };
+    nix-filter = {
+      url = "github:numtide/nix-filter";
+    };
   };
 
-  outputs = inputs @ { flake-parts, ... }:
+  outputs = inputs @ { flake-parts, nix-filter, ... }:
     flake-parts.lib.mkFlake { inherit inputs; }
       ({ lib, ... }: {
         systems = [
@@ -20,7 +23,7 @@
         ];
         perSystem = { config, pkgs, self', ... }: {
           packages = {
-            flake_env = pkgs.ocamlPackages.callPackage ./default.nix { };
+            flake_env = pkgs.ocamlPackages.callPackage ./default.nix { inherit nix-filter; };
             default = config.packages.flake_env;
           };
           devShells.default = pkgs.mkShell {
