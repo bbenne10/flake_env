@@ -29,6 +29,7 @@
           devShells.default = pkgs.mkShell {
             inputsFrom = [ self'.packages.default ];
             packages = [
+              pkgs.just
               pkgs.ocamlPackages.dune_3
               pkgs.ocamlPackages.findlib
               pkgs.ocamlPackages.ocaml
