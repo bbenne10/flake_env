@@ -40,6 +40,13 @@ watch_file **/*.nix
 use flake_env .
 ```
 
+## Developing
+
+This repo uses [just](https://just.systems/) to manage simple build jobs.
+After activating the development environment in the repo, run `just -l`  to list tasks.
+
+Please remember to format code before issuing patches.
+
 ## Credits
 
 This takes huge inspiration (and literal code-chunks) from nix-direnv. 
