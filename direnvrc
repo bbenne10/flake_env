@@ -41,7 +41,7 @@ use_flake_env() {
   local ld=$(direnv_layout_dir)
   export direnv
 
-  eval "$(@flake_env@ "$1" "$ld")"
+  eval "$(@flake_env@ "$ld" "$@")"
 
   export -n direnv
 

@@ -1,18 +1,11 @@
-(lang dune 3.11)
+(lang dune 3.12)
 
 (name flake_env)
-
 (generate_opam_files true)
-
-(source
- (sourcehut bryan_bennett/flake_env))
-
+(source (sourcehut bryan_bennett/flake_env))
 (authors "Bryan Bennett")
-
 (maintainers "Bryan Bennett")
-
 (license MIT)
-
 (documentation https://git.sr.ht/~bryan_bennett/flake_env)
 
 (package

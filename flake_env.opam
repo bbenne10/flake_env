@@ -10,7 +10,7 @@ doc: "https://git.sr.ht/~bryan_bennett/flake_env"
 bug-reports: "https://todo.sr.ht/~bryan_bennett/flake_env"
 depends: [
   "ocaml"
-  "dune" {>= "3.11"}
+  "dune" {>= "3.12"}
   "odoc" {with-doc}
 ]
 build: [

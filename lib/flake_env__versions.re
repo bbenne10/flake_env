@@ -1,28 +1,26 @@
 open Core;
 module Unix = Core_unix;
 
+module Util = Flake_env__util;
+
+
 type t = {
   major: int,
   minor: int,
   point: int,
 };
 
+let init = (major, minor, point) => {
+  {major, minor, point}
+};
+
+let required_direnv_version = init(2, 21, 3);
+
+let required_nix_version = init(2, 10, 0);
+
 let semver_re = Re.compile(Re.Posix.re({|([0-9]+)\.([0-9]+)\.([0-9]+)|}));
 
-let required_direnv_version = {
-  major: 2,
-  minor: 21,
-  point: 3
-};
-
-let required_nix_version = {
-  major: 2,
-  minor: 10,
-  point: 0
-};
-
-// TODO: test this
-let compare_version_number = (a, b) => {
+let compare = (a, b) => {
   switch (a, b) {
   | (a, b) when a.major == b.major && a.minor == b.minor && a.point == b.point => 0
   | (a, b) when a.major < b.major => -1
@@ -32,46 +30,47 @@ let compare_version_number = (a, b) => {
   }
 }
 
-let%test_unit "compare_version_number" = [%test_eq: int](compare_version_number({major: 1, minor: 0, point: 0}, {major: 2, minor: 0, point: 0}), -1);
-
 let extract_version_number = (cmd) => {
-  let full_cmd = cmd ++ " --version";
-  switch (Core_unix.open_process_in(full_cmd) |> In_channel.input_line) {
-  | Some(stdout) => {
+  switch (Util.run_process(cmd, ["--version"])) {
+  | (Ok(), stdout)  when String.length(stdout) > 0 => {
       let substrings = Re.exec(semver_re, stdout);
       let groups = Re.Group.all(substrings);
-      Ok({
-        major: groups[1] |> int_of_string,
-        minor: groups[2] |> int_of_string,
-        point: groups[3] |> int_of_string
-      })
+      if ((groups |> Array.length) == 4) {
+        Ok({
+          major: groups[1] |> int_of_string,
+          minor: groups[2] |> int_of_string,
+          point: groups[3] |> int_of_string
+        })
+      } else {
+        Error(Printf.sprintf("Stdout did not contain a version number for `%s --version`", cmd))
+      }
     }
-  | None => Error(Printf.sprintf("Failed executing '%s'\n", cmd))
+    | _ => Error(Printf.sprintf("Failed executing '%s'\n", cmd))
   }
 };
 
-let is_version_new_enough = (cur, needed) => {
+let is_new_enough = (cur, needed) => {
   switch (cur) {
     | Ok(cur) => {
-        switch (compare_version_number(cur, needed)) {
+        switch (compare(cur, needed)) {
         | x when x < 0 => Ok(false)
         | _ => Ok(true)
         }
       }
     | Error(e) => Error(e)
   }
-}
+};
 
-let preflight_versions = () => {
-  let in_direnv = switch (Sys.getenv("direnv")) {
+let in_direnv = () => switch (Sys.getenv("direnv")) {
     | Some(_) => true
     | None => false
-  };
+};
 
-  let is_nix_new_enough = is_version_new_enough(extract_version_number("nix"), required_nix_version);
-  let is_direnv_new_enough = is_version_new_enough(extract_version_number("direnv"), required_direnv_version);
+let preflight_versions = () => {
+  let is_nix_new_enough = is_new_enough(extract_version_number("nix"), required_nix_version);
+  let is_direnv_new_enough = is_new_enough(extract_version_number("direnv"), required_direnv_version);
 
-  switch (in_direnv, is_direnv_new_enough, is_nix_new_enough) {
+  switch (in_direnv(), is_direnv_new_enough, is_nix_new_enough) {
     | (false, _, _) => Error("Not in direnv!")
     | (_, Ok(false), _) => Error("Direnv version is not new enough")
     | (_, _, Ok(false)) => Error("Nix version is not new enough")
