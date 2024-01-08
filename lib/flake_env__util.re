@@ -39,12 +39,16 @@ let hash_files = filenames => {
 let rec rmrf = path => {
   switch (Unix.lstat(path).st_kind) {
   | exception (Unix.Unix_error(_, _, _)) => ()
-  | S_REG | S_LNK => Unix.unlink(path)
+  | S_REG
+  | S_LNK => Unix.unlink(path)
   | S_DIR =>
     Sys_unix.readdir(path)
     |> Array.iter(~f=name => rmrf(Filename.concat(path, name)));
     Unix.rmdir(path);
-  | _ => Printf.eprintf("Unsupported file type (Chr or Block device, FIFO, or Socket)\n")
+  | _ =>
+    Printf.eprintf(
+      "Unsupported file type (Chr or Block device, FIFO, or Socket)\n",
+    )
   };
 };
 

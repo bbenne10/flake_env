@@ -1,13 +1,10 @@
 (tests
-  (names
-    flake_env_test_versions
-    flake_env_test_watches
-    flake_env_test_util)
-  (deps spit_version.sh spit_gibberish.sh)
-  (libraries
-    lib
-    alcotest
-    core
-    core_unix
-    core_unix.sys_unix
-    core_unix.filename_unix))
+ (names flake_env_test_versions flake_env_test_watches flake_env_test_util)
+ (deps spit_version.sh spit_gibberish.sh)
+ (libraries
+  lib
+  alcotest
+  core
+  core_unix
+  core_unix.sys_unix
+  core_unix.filename_unix))

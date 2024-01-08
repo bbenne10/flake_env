@@ -1,13 +1,15 @@
 (library
-  (name lib)
-  (public_name flake_env.lib)
-  (libraries
-    core
-    core_unix
-    core_unix.filename_unix
-    core_unix.sys_unix
-    ppx_yojson_conv
-    re
-    sha)
-  (instrumentation (backend bisect_ppx))
-  (preprocess (pps ppx_yojson_conv ppx_jane )))
+ (name lib)
+ (public_name flake_env.lib)
+ (libraries
+  core
+  core_unix
+  core_unix.filename_unix
+  core_unix.sys_unix
+  ppx_yojson_conv
+  re
+  sha)
+ (instrumentation
+  (backend bisect_ppx))
+ (preprocess
+  (pps ppx_yojson_conv ppx_jane)))

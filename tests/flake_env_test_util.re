@@ -111,7 +111,11 @@ let test_get_args_just_enough = () => {
 };
 
 let test_get_args_error = () => {
-  check_get_args("Errors on too few args", Error(), get_args([|"000", "111"|]))
+  check_get_args(
+    "Errors on too few args",
+    Error(),
+    get_args([|"000", "111"|]),
+  );
 };
 
 let () =
@@ -148,11 +152,15 @@ let () =
         ),
         (
           "get_args",
-        [
-          test_case("Parses Args", `Quick, test_get_args_simple),
-          test_case("Parses just enough args", `Quick, test_get_args_just_enough),
-          test_case("Handles too few args", `Quick, test_get_args_error)
-        ],
+          [
+            test_case("Parses Args", `Quick, test_get_args_simple),
+            test_case(
+              "Parses just enough args",
+              `Quick,
+              test_get_args_just_enough,
+            ),
+            test_case("Handles too few args", `Quick, test_get_args_error),
+          ],
         ),
       ],
     )

@@ -1,5 +1,14 @@
 (executable
-  (name flake_env)
-  (public_name flake_env)
-  (libraries core core_unix core_unix.filename_unix core_unix.sys_unix ppx_yojson_conv re sha lib)
-  (preprocess (pps ppx_yojson_conv ppx_jane)))
+ (name flake_env)
+ (public_name flake_env)
+ (libraries
+  core
+  core_unix
+  core_unix.filename_unix
+  core_unix.sys_unix
+  ppx_yojson_conv
+  re
+  sha
+  lib)
+ (preprocess
+  (pps ppx_yojson_conv ppx_jane)))
