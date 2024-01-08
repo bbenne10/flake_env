@@ -3,7 +3,7 @@
     flake_env_test_versions
     flake_env_test_watches
     flake_env_test_util)
-  (deps spit_version.sh)
+  (deps spit_version.sh spit_gibberish.sh)
   (libraries
     lib
     alcotest

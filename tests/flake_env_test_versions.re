@@ -103,8 +103,18 @@ let test_extract_version_number_success = () => {
   check_version("Versions", Ok(Versions.init(1, 1, 1)), result);
 };
 
+let test_extract_version_number_no_version = () => {
+  let result = Versions.extract_version_number("../tests/spit_gibberish.sh");
+  check_version("Versions", Error("Stdout did not contain a version number for `../tests/spit_gibberish.sh --version`"), result);
+};
+
+let test_extract_version_number_nonexistent = () => {
+  let result = Versions.extract_version_number("nonexistent.sh");
+  check_version("Versions", Error("Failed executing 'nonexistent.sh'"), result);
+};
+
+
 // TODO: Test:
-// * extract_version_number: impure, don't know how to get a concrete version number to test against
 // * preflight_versions? impure, but m
 let () =
   Alcotest.(
@@ -167,6 +177,8 @@ let () =
           "extract_version_number",
           [
             test_case("success", `Quick, test_extract_version_number_success),
+            test_case("no version number", `Quick, test_extract_version_number_no_version),
+            test_case("missing binary", `Quick, test_extract_version_number_nonexistent),
           ],
         ),
       ],

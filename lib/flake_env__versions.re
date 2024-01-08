@@ -30,23 +30,27 @@ let compare = (a, b) => {
   }
 }
 
-let extract_version_number = (cmd) => {
+let extract_version_number = cmd => {
   switch (Util.run_process(cmd, ["--version"])) {
-  | (Ok(), stdout)  when String.length(stdout) > 0 => {
-      let substrings = Re.exec(semver_re, stdout);
+  | (Ok (), stdout) when String.length(stdout) > 0 =>
+    switch (Re.exec(semver_re, stdout)) {
+    | exception Stdlib.Not_found =>
+      Error(
+        Printf.sprintf(
+          "Stdout did not contain a version number for `%s --version`",
+          cmd,
+        ),
+      )
+    | substrings =>
       let groups = Re.Group.all(substrings);
-      if ((groups |> Array.length) == 4) {
-        Ok({
-          major: groups[1] |> int_of_string,
-          minor: groups[2] |> int_of_string,
-          point: groups[3] |> int_of_string
-        })
-      } else {
-        Error(Printf.sprintf("Stdout did not contain a version number for `%s --version`", cmd))
-      }
+      Ok({
+        major: groups[1] |> int_of_string,
+        minor: groups[2] |> int_of_string,
+        point: groups[3] |> int_of_string,
+      });
     }
-    | _ => Error(Printf.sprintf("Failed executing '%s'\n", cmd))
-  }
+  | _ => Error(Printf.sprintf("Failed executing '%s'", cmd))
+  };
 };
 
 let is_new_enough = (cur, needed) => {
