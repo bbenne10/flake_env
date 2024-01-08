@@ -30,6 +30,8 @@
             inputsFrom = [ self'.packages.default ];
             packages = [
               pkgs.just
+              pkgs.ocamlPackages.alcotest
+              pkgs.ocamlPackages.bisect_ppx
               pkgs.ocamlPackages.dune_3
               pkgs.ocamlPackages.findlib
               pkgs.ocamlPackages.ocaml
