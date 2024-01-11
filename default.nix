@@ -1,6 +1,9 @@
-{ buildDunePackage
+{ alcotest
+, bisect_ppx
+, buildDunePackage
 , core
 , core_unix
+, coreutils
 , findlib
 , lib
 , nix-filter
@@ -19,21 +22,29 @@ buildDunePackage {
     include = [
       "bin"
       "lib"
+      "tests"
       ./dune-project
       ./flake.nix
       ./default.nix
       ./flake.lock
       ./flake_env.opam
       ./direnvrc
+      ./LICENSE
     ];
   };
   duneVersion = "3";
+  doCheck = true;
   postPatch = ''
     substituteInPlace direnvrc --replace "@flake_env@" "$out/bin/flake_env"
+    substituteInPlace tests/spit*.sh --replace "/usr/bin/env" "${coreutils}/bin/env"
   '';
   postInstall = ''
     install -m400 -D direnvrc $out/share/flake_env/direnvrc
   '';
+  checkInputs = [
+    alcotest
+    bisect_ppx
+  ];
   nativeBuildInputs = [
     reason
   ];
